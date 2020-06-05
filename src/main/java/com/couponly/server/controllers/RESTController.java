@@ -1,6 +1,7 @@
 package com.couponly.server.controllers;
 
 import com.couponly.server.model.Deal;
+import com.couponly.server.model.DealWrapper;
 import com.couponly.server.model.RawResponse;
 import com.couponly.server.services.RequestService;
 import okhttp3.RequestBody;
@@ -23,13 +24,15 @@ public class RESTController {
 
     @GetMapping(value = "/test", produces = "application/json")
     public RawResponse getRawResponse() {
-        return requestService.makeRequest("");
+        RawResponse response = requestService.makeRequest("");
+//        logger.info(String.valueOf(response));
+        return response;
     }
     @GetMapping(value = "/get-all-deals", produces = "application/json")
-    public List<Deal> getAllDeals() {
+    public List<DealWrapper> getAllDeals() {
         RawResponse rawResponse = requestService.makeRequest("");
-        List<Deal> dealList = rawResponse.getDeals();
-        logger.info(rawResponse.getDeals().get(1).getCategoryName());
+        List<DealWrapper> dealList = rawResponse.getDeals();
+//        logger.info(rawResponse.getDeals().get(1).getCategoryName());
         return dealList;
     }
 

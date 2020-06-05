@@ -35,7 +35,9 @@ public class RequestService {
             e.printStackTrace();
         }
         logger.info(json);
-        return gson.fromJson(json, RawResponse.class);
+        RawResponse rawResponse = gson.fromJson(json, RawResponse.class);
+        logger.warn(gson.toJson(rawResponse));
+        return rawResponse;
     }
 
     private void request(String params) {
