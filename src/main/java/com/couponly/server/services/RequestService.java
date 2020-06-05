@@ -1,5 +1,6 @@
 package com.couponly.server.services;
 
+import com.couponly.server.model.Deal;
 import com.couponly.server.model.RawResponse;
 import com.google.gson.Gson;
 import okhttp3.*;
@@ -34,9 +35,11 @@ public class RequestService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        logger.info(json);
+//        logger.info(json);
         RawResponse rawResponse = gson.fromJson(json, RawResponse.class);
-        logger.warn(gson.toJson(rawResponse));
+//        logger.warn(gson.toJson(rawResponse));
+//        Deal deal = rawResponse.getDeals().get(0).getDeal();
+//        logger.info(deal.getShortTitle());
         return rawResponse;
     }
 
