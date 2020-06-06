@@ -1,6 +1,7 @@
 package com.couponly.server.services;
 
 import com.couponly.server.model.Deal;
+import com.couponly.server.model.DealWrapper;
 import com.couponly.server.model.RawResponse;
 import com.google.gson.Gson;
 import okhttp3.*;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class RequestService {
@@ -19,12 +21,23 @@ public class RequestService {
     @Value("${secret.key}")
     private String KEY;
     private String BASE_URL = "https://api.discountapi.com/v2/deals";
+    private String CONFIG = "&online=false";
 
     private Logger logger = LoggerFactory.getLogger(RequestService.class);
-    public RawResponse makeRequest(String params) {
-        String url = BASE_URL + "?api_key=" +KEY;
+    public RawResponse requestRawResponse() {
+        return makeRequest("");
+    }
+    public List<DealWrapper> requestAllDeals(String params) {
+       return makeRequest(params).getDeals();
+    }
+    public List<DealWrapper> requestDealsByLocation(String locationName) {
+        return makeRequest("location=" + locationName).getDeals();
+    }
+    private RawResponse makeRequest(String params) {
+        String url = BASE_URL + "?" + params + CONFIG;
         Request request = new Request.Builder()
                 .url(url)
+                .addHeader("Authorization", "api_key " + KEY)
                 .build();
         Response response = null;
         String json = "";
@@ -41,10 +54,6 @@ public class RequestService {
 //        Deal deal = rawResponse.getDeals().get(0).getDeal();
 //        logger.info(deal.getShortTitle());
         return rawResponse;
-    }
-
-    private void request(String params) {
-
     }
 
 }
