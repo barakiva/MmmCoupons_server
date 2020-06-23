@@ -66,6 +66,8 @@ public class RequestService {
                     .setPath(PATH)
                     .setParameters(mapToNameValuePair(params))
                     .setParameter("online", "false")
+                    .setParameter("provider_slugs", "groupon")
+                    .setParameter("radius", "40")
                     .build();
         } catch (URISyntaxException e) {
             e.printStackTrace();
