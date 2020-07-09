@@ -6,17 +6,16 @@ import com.couponly.server.model.RawResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import okhttp3.*;
-import okhttp3.Request.Builder;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriBuilder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,14 +24,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class RequestService {
     private final SanitationService sanitationService;
-    private OkHttpClient client = new OkHttpClient();
+    private final OkHttpClient client;
     private Gson gson = new Gson();
     private Logger logger = LoggerFactory.getLogger(RequestService.class);
 
@@ -41,21 +39,22 @@ public class RequestService {
     private String BASE_URL = "api.discountapi.com";
     private String PATH = "/v2/deals";
 
-    public RequestService(SanitationService sanitationService) {
+    public RequestService(SanitationService sanitationService, OkHttpClient client) {
         this.sanitationService = sanitationService;
+        this.client = client;
     }
 
     public RawResponse requestRawResponse() {
         return basicRequest("");
     }
-    public List<DealWrapper> requestAllDeals(String params) {
-       return basicRequest(params).getDeals();
+    public List<Deal> requestAllDeals(Map params) {
+       return makeComplexRequest(params);
     }
     public List<DealWrapper> requestDealsByLocation(String locationName) {
         return basicRequest("location=" + locationName).getDeals();
     }
 
-    public List<DealWrapper> makeComplexRequest(Map<String, String> params) {
+    public List<Deal> makeComplexRequest(Map<String, String> params) {
         URI uri = null;
         try {
             uri =  new URIBuilder()
@@ -71,7 +70,8 @@ public class RequestService {
             e.printStackTrace();
         }
         RawResponse response = makeRequest(uri);
-        return sanitationService.cleanApiKey(response.getDeals());
+        List<Deal> deals = sanitationService.dealUnwrap(response.getDeals());
+        return sanitationService.cleanApiKeys(deals);
     }
 
     public RawResponse makeRequest(URI uri) {
