@@ -4,6 +4,7 @@ import com.couponly.server.model.Deal;
 import com.couponly.server.model.DealWrapper;
 import com.couponly.server.model.RawResponse;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import okhttp3.*;
 import okhttp3.Request.Builder;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriBuilder;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,18 +31,20 @@ import java.util.Map;
 
 @Service
 public class RequestService {
-    @Autowired
-    private SanitationService sanitationService;
-
+    private final SanitationService sanitationService;
     private OkHttpClient client = new OkHttpClient();
     private Gson gson = new Gson();
+    private Logger logger = LoggerFactory.getLogger(RequestService.class);
+
     @Value("${secret.key}")
     private String KEY;
     private String BASE_URL = "api.discountapi.com";
     private String PATH = "/v2/deals";
-    private String CONFIG = "&online=false";
 
-    private Logger logger = LoggerFactory.getLogger(RequestService.class);
+    public RequestService(SanitationService sanitationService) {
+        this.sanitationService = sanitationService;
+    }
+
     public RawResponse requestRawResponse() {
         return basicRequest("");
     }
@@ -50,13 +54,7 @@ public class RequestService {
     public List<DealWrapper> requestDealsByLocation(String locationName) {
         return basicRequest("location=" + locationName).getDeals();
     }
-    private List<NameValuePair> mapToNameValuePair(Map<String, String> params) {
-        List<NameValuePair> list = new ArrayList<>(params.size());
-        params.forEach( (key ,value)  -> {
-            list.add(new BasicNameValuePair(key, value));
-        });
-        return list;
-    }
+
     public List<DealWrapper> makeComplexRequest(Map<String, String> params) {
         URI uri = null;
         try {
@@ -86,24 +84,40 @@ public class RequestService {
 
     public RawResponse basicRequest(String params) {
         Request request = new Request.Builder()
-                .url(BASE_URL + PATH)
+                .url("https://"+BASE_URL + PATH)
                 .addHeader("Authorization", "api_key " + KEY)
                 .build();
         return getRawResponse(request);
     }
-
-
     private RawResponse getRawResponse(Request request) {
         Response response = null;
         String json = "";
-
         try {
             response = client.newCall(request).execute();
             json = response.body().string();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        RawResponse rawResponse = gson.fromJson(json, RawResponse.class);
-        return rawResponse;
+        return gson.fromJson(json, RawResponse.class);
+    }
+    //Local response
+    public List<Deal> mockResponse(){
+        String userDirectory = System.getProperty("user.dir");
+        StringBuilder sb =  new StringBuilder();
+        File file = new File(userDirectory + "\\src\\main\\resources\\assets\\pizzas.json");
+
+        JsonReader reader = null;
+        try {
+            reader = new JsonReader(new FileReader(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return gson.fromJson(reader,new TypeToken<List<Deal>>(){}.getType());
+    }
+    //Helper Methods
+    private List<NameValuePair> mapToNameValuePair(Map<String, String> params) {
+        List<NameValuePair> list = new ArrayList<>(params.size());
+        params.forEach( (key ,value)  -> list.add(new BasicNameValuePair(key, value)));
+        return list;
     }
 }

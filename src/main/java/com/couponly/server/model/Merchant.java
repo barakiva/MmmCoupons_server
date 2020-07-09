@@ -1,12 +1,19 @@
 package com.couponly.server.model;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 @Getter @Setter @NoArgsConstructor
+@Entity @Table(name = "merchants")
 public class Merchant {
+    @Id
     @SerializedName("id")
     private Long id;
     @SerializedName("name")

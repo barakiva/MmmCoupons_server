@@ -1,12 +1,17 @@
 package com.couponly.server.model;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
+
 @Getter @Setter @NoArgsConstructor
+@Entity @Table(name = "deals")
 public class Deal {
+    @Id
     private Long id;
     private String title;
     @SerializedName("short_title")
@@ -36,6 +41,7 @@ public class Deal {
     private String createdAt;
     @SerializedName("updated_at")
     private String updatedAt;
+    @ManyToOne()
     private Merchant merchant;
     @SerializedName("number_sold")
     private Long numberSold;
