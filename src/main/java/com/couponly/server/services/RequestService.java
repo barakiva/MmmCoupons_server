@@ -117,7 +117,7 @@ public class RequestService {
     //Helper Methods
     private List<NameValuePair> mapToNameValuePair(Map<String, String> params) {
         List<NameValuePair> list = new ArrayList<>(params.size());
-        params.forEach( (key ,value)  -> list.add(new BasicNameValuePair(key, value)));
+        params.forEach((key ,value) -> list.add(new BasicNameValuePair(key, value)));
         return list;
     }
 }
