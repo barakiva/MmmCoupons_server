@@ -1,10 +1,10 @@
 package com.couponly.server.controllers;
 
-import com.couponly.server.model.Deal;
-import com.couponly.server.model.DealWrapper;
-import com.couponly.server.model.RawResponse;
+import com.couponly.server.model.responses.Deal;
+import com.couponly.server.model.responses.DealWrapper;
+import com.couponly.server.model.responses.RawResponse;
+import com.couponly.server.services.DealRequestService;
 import com.couponly.server.services.RequestService;
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletContext;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,22 +19,23 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/deals")
 public class DealController {
-    private final RequestService requestService;
+    private final DealRequestService dealRequestService;
     private final ServletContext servletContext;
+
     private final Logger logger = LoggerFactory.getLogger(DealController.class);
 
-    public DealController(RequestService requestService, ServletContext servletContext) {
-        this.requestService = requestService;
+    public DealController(DealRequestService dealRequestService, ServletContext servletContext) {
+        this.dealRequestService = dealRequestService;
         this.servletContext = servletContext;
     }
 
     @GetMapping(value = "/raw-response", produces = "application/json")
     public ResponseEntity<RawResponse> getRawResponse() {
-        return new ResponseEntity<>(requestService.requestRawResponse(), HttpStatus.OK);
+        return new ResponseEntity<>(dealRequestService.fetchRawResponse(), HttpStatus.OK);
     }
     @GetMapping(value = "/get-all-deals", produces = "application/json")
     public ResponseEntity<List<Deal>> getAllDeals() {
-        List<Deal> deals = requestService.requestAllDeals(Map.of(
+        List<Deal> deals = dealRequestService.fetchAllDeals(Map.of(
                 "a", "b",
                 "c", "d"
         )).subList(0,8);
@@ -44,8 +44,8 @@ public class DealController {
 
     @GetMapping(value = "/deals-by-location", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<List<DealWrapper>> getDealsByLocation(@RequestParam String locationName) {
-        List<DealWrapper> deals = requestService.requestDealsByLocation(locationName);
+    public ResponseEntity<List<Deal>> getDealsByLocation(@RequestParam String locationName) {
+        List<Deal> deals = dealRequestService.fetchDealsByLocation(locationName);
         return new ResponseEntity<>(deals,HttpStatus.OK);
     }
 
@@ -53,8 +53,7 @@ public class DealController {
     @ResponseBody
     public ResponseEntity<List<Deal>> getDealsByLocationAndQuery(
             @RequestParam Map<String, String> params) {
-
-        List<Deal> deals = requestService.makeComplexRequest(params);
+        List<Deal> deals = dealRequestService.fetchDealsByLocationAndQuery(params);
         return new ResponseEntity<>(deals,HttpStatus.OK);
     }
     //Mock local response
@@ -62,7 +61,7 @@ public class DealController {
     @ResponseBody
     public ResponseEntity<List<Deal>> getDealsByLocationAndQueryLocal(
             @RequestParam Map<String, String> params) {
-        List<Deal> list = requestService.mockResponse();
+        List<Deal> list = dealRequestService.fetchLocalResponse();
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 

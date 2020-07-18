@@ -1,7 +1,7 @@
 package com.couponly.server.services;
 
-import com.couponly.server.model.Deal;
-import com.couponly.server.model.DealWrapper;
+import com.couponly.server.model.responses.Deal;
+import com.couponly.server.model.responses.DealWrapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,8 +27,8 @@ public class SanitationService {
         deal.setImageUrl(cleanUrls.get(1));
         return deal;
     }
-    public List<String> cleanUrls(List<String> urls) {
-        return urls.stream()
+    public List<String> cleanUrls(List<String> dirtyUrls) {
+        return dirtyUrls.stream()
                 .map(url -> url =  url.split("\\?")[0])
                 .collect(Collectors.toList());
     }

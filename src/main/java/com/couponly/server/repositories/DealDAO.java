@@ -1,9 +1,8 @@
 package com.couponly.server.repositories;
 
-import com.couponly.server.model.Deal;
+import com.couponly.server.model.responses.Deal;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
 
 @Repository
 public class DealDAO {

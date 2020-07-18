@@ -1,6 +1,6 @@
 package com.couponly.server.repositories;
 
-import com.couponly.server.model.Merchant;
+import com.couponly.server.model.responses.Merchant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

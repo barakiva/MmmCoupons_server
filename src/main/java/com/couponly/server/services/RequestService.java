@@ -1,8 +1,7 @@
 package com.couponly.server.services;
 
-import com.couponly.server.model.Deal;
-import com.couponly.server.model.DealWrapper;
-import com.couponly.server.model.RawResponse;
+import com.couponly.server.model.responses.Deal;
+import com.couponly.server.model.responses.RawResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
@@ -29,32 +28,28 @@ import java.util.Map;
 
 @Service
 public class RequestService {
-    private final SanitationService sanitationService;
     private final OkHttpClient client;
-    private Gson gson = new Gson();
-    private Logger logger = LoggerFactory.getLogger(RequestService.class);
+    private final Gson gson = new Gson();
+    private final Logger logger = LoggerFactory.getLogger(RequestService.class);
 
     @Value("${secret.key}")
     private String KEY;
-    private String BASE_URL = "api.discountapi.com";
-    private String PATH = "/v2/deals";
+    private final String BASE_URL = "api.discountapi.com";
+    private final String PATH = "/v2/deals";
 
-    public RequestService(SanitationService sanitationService, OkHttpClient client) {
-        this.sanitationService = sanitationService;
+    public RequestService(OkHttpClient client) {
         this.client = client;
     }
 
-    public RawResponse requestRawResponse() {
-        return basicRequest("");
-    }
-    public List<Deal> requestAllDeals(Map params) {
-       return makeComplexRequest(params);
-    }
-    public List<DealWrapper> requestDealsByLocation(String locationName) {
-        return basicRequest("location=" + locationName).getDeals();
+    public RawResponse requestDealsByLocation(String location) {
+        return basicRequest("location=" + location);
     }
 
-    public List<Deal> makeComplexRequest(Map<String, String> params) {
+    public RawResponse makeComplexRequest(Map<String, String> params) {
+        return makeRequest(buildUri(params));
+    }
+
+    private URI buildUri(Map<String, String> params) {
         URI uri = null;
         try {
             uri =  new URIBuilder()
@@ -69,12 +64,9 @@ public class RequestService {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        RawResponse response = makeRequest(uri);
-        List<Deal> deals = sanitationService.dealUnwrap(response.getDeals());
-        return sanitationService.cleanApiKeys(deals);
+        return uri;
     }
-
-    public RawResponse makeRequest(URI uri) {
+    private RawResponse makeRequest(URI uri) {
         Request request = new Request.Builder()
                 .url(uri.toString())
                 .addHeader("Authorization", "api_key " + KEY)

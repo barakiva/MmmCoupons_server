@@ -1,4 +1,4 @@
-package com.couponly.server.model;
+package com.couponly.server.model.responses;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

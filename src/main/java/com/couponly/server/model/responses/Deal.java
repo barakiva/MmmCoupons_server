@@ -1,7 +1,6 @@
-package com.couponly.server.model;
+package com.couponly.server.model.responses;
 
 import com.google.gson.annotations.SerializedName;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,11 +40,10 @@ public class Deal {
     private String createdAt;
     @SerializedName("updated_at")
     private String updatedAt;
+    @SerializedName("expires_at")
+    private String expiresAt;
     @ManyToOne()
     private Merchant merchant;
     @SerializedName("number_sold")
     private Long numberSold;
-    @SerializedName("expires_at")
-    private String expiresAt;
-
 }

@@ -1,6 +1,6 @@
 package com.couponly.server.repositories;
 
-import com.couponly.server.model.Merchant;
+import com.couponly.server.model.responses.Merchant;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityNotFoundException;

@@ -1,5 +1,6 @@
-package com.couponly.server.model;
+package com.couponly.server.model.responses;
 
+import com.couponly.server.model.ApiQuery;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

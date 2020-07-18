@@ -1,4 +1,4 @@
-package com.couponly.server.model;
+package com.couponly.server.model.responses;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Builder;
