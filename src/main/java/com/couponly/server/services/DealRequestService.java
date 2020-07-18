@@ -20,19 +20,10 @@ public class DealRequestService {
     public RawResponse fetchRawResponse() {
         return requestService.basicRequest("");
     }
-    public List<Deal> fetchAllDeals(Map<String, String> params) {
+
+    public List<Deal> fetchDeals(Map<String, String> params) {
         List<Deal> deals = sanitationService.dealUnwrap(
-                requestService.makeComplexRequest(params).getDeals());
-        return sanitationService.cleanApiKeys(deals);
-    }
-    public List<Deal> fetchDealsByLocation(String location) {
-        List<Deal> deals = sanitationService.dealUnwrap(
-                requestService.requestDealsByLocation("").getDeals());
-        return sanitationService.cleanApiKeys(deals);
-    }
-    public List<Deal> fetchDealsByLocationAndQuery(Map<String, String> params) {
-        List<Deal> deals = sanitationService.dealUnwrap(
-                requestService.makeComplexRequest(params).getDeals());
+                requestService.requestDealsByParameters(params).getDeals());
         return sanitationService.cleanApiKeys(deals);
     }
     public List<Deal> fetchLocalResponse() {

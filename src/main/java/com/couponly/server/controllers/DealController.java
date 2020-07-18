@@ -1,10 +1,8 @@
 package com.couponly.server.controllers;
 
 import com.couponly.server.model.responses.Deal;
-import com.couponly.server.model.responses.DealWrapper;
 import com.couponly.server.model.responses.RawResponse;
 import com.couponly.server.services.DealRequestService;
-import com.couponly.server.services.RequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -33,27 +31,12 @@ public class DealController {
     public ResponseEntity<RawResponse> getRawResponse() {
         return new ResponseEntity<>(dealRequestService.fetchRawResponse(), HttpStatus.OK);
     }
-    @GetMapping(value = "/get-all-deals", produces = "application/json")
-    public ResponseEntity<List<Deal>> getAllDeals() {
-        List<Deal> deals = dealRequestService.fetchAllDeals(Map.of(
-                "a", "b",
-                "c", "d"
-        )).subList(0,8);
-        return new ResponseEntity<>(deals, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/deals-by-location", produces = "application/json")
-    @ResponseBody
-    public ResponseEntity<List<Deal>> getDealsByLocation(@RequestParam String locationName) {
-        List<Deal> deals = dealRequestService.fetchDealsByLocation(locationName);
-        return new ResponseEntity<>(deals,HttpStatus.OK);
-    }
 
     @GetMapping(value = "/location-and-query", produces = "application/json")
     @ResponseBody
     public ResponseEntity<List<Deal>> getDealsByLocationAndQuery(
             @RequestParam Map<String, String> params) {
-        List<Deal> deals = dealRequestService.fetchDealsByLocationAndQuery(params);
+        List<Deal> deals = dealRequestService.fetchDeals(params);
         return new ResponseEntity<>(deals,HttpStatus.OK);
     }
     //Mock local response
