@@ -15,7 +15,9 @@ public class Deal {
     private String title;
     @SerializedName("short_title")
     private String shortTitle;
+    @Column(length = 1200)
     private String description;
+    @Column(length = 1200)
     @SerializedName("fine_print")
     private String finePrint;
     private String url;
@@ -42,7 +44,8 @@ public class Deal {
     private String updatedAt;
     @SerializedName("expires_at")
     private String expiresAt;
-    @ManyToOne()
+    @ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "merchantId")
     private Merchant merchant;
     @SerializedName("number_sold")
     private Long numberSold;

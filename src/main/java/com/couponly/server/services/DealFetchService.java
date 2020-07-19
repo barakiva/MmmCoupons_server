@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class DealRequestService {
+public class DealFetchService {
     private final RequestService requestService;
     private final SanitationService sanitationService;
 
-    public DealRequestService(RequestService requestService, SanitationService sanitationService) {
+    public DealFetchService(RequestService requestService, SanitationService sanitationService) {
         this.requestService = requestService;
         this.sanitationService = sanitationService;
     }
@@ -23,7 +23,7 @@ public class DealRequestService {
 
     public List<Deal> fetchDeals(Map<String, String> params) {
         List<Deal> deals = sanitationService.dealUnwrap(
-                requestService.requestDealsByParameters(params).getDeals());
+                requestService.requestDeals(params).getDeals());
         return sanitationService.cleanApiKeys(deals);
     }
     public List<Deal> fetchLocalResponse() {

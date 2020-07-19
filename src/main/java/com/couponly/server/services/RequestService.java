@@ -45,7 +45,7 @@ public class RequestService {
     }
 
 
-    public RawResponse requestDealsByParameters(Map<String, String> params) {
+    public RawResponse requestDeals(Map<String, String> params) {
         return makeRequest(buildUri(params));
     }
 
