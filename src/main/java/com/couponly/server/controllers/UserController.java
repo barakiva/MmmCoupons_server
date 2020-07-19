@@ -1,8 +1,7 @@
 package com.couponly.server.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.couponly.server.model.users.Login;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 
@@ -11,10 +10,19 @@ import javax.annotation.PostConstruct;
 public class UserController {
     @PostConstruct
     public void post() {
-        System.out.println("User controller");
     }
     @GetMapping("/test")
     public String test() {
         return "User controller";
+    }
+
+//    @PostMapping("/register-user")
+//    public void registerUser(@RequestBody Login user){
+//
+//    }
+//    @GetMapping("/login-user")
+    @DeleteMapping("/delete-user")
+    public void deleteUser(long userId){
+
     }
 }

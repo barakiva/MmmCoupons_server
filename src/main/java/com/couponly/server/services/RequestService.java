@@ -11,6 +11,8 @@ import okhttp3.Response;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -28,20 +30,15 @@ import java.util.Map;
 public class RequestService {
     private final OkHttpClient client;
     private final Gson gson = new Gson();
+    private final Logger logger = LoggerFactory.getLogger(RequestService.class);
 
     @Value("${secret.key}")
     private String KEY;
     private final String BASE_URL = "api.discountapi.com";
     private final String PATH = "/v2/deals";
-    private final List<NameValuePair> parameterGroup = new ArrayList<>();
 
     public RequestService(OkHttpClient client) {
         this.client = client;
-        Map<String, String> responsePreferences = Map.of(
-                "online", "false",
-                "provider_slugs", "groupon",
-                "radius", "40");
-        mapToNameValuePair(responsePreferences);
     }
 
 
@@ -50,14 +47,13 @@ public class RequestService {
     }
 
     private URI buildUri(Map<String, String> params) {
-        mapToNameValuePair(params);
         URI uri = null;
         try {
             uri =  new URIBuilder()
                     .setScheme("https")
                     .setHost(BASE_URL)
                     .setPath(PATH)
-                    .setParameters(parameterGroup)
+                    .setParameters(mapToNameValuePair(params))
                     .build();
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -105,7 +101,14 @@ public class RequestService {
         return gson.fromJson(reader,new TypeToken<List<Deal>>(){}.getType());
     }
     //Helper Methods
-    private void mapToNameValuePair(Map<String, String> paramInput) {
+    private List<NameValuePair> mapToNameValuePair(Map<String, String> paramInput) {
+        List<NameValuePair> parameterGroup = new ArrayList<>();
+        Map<String, String> responsePreferences = Map.of(
+                "online", "false",
+                "provider_slugs", "groupon",
+                "radius", "40");
+        responsePreferences.forEach((key,value) -> parameterGroup.add(new BasicNameValuePair(key,value)));
         paramInput.forEach((key ,value) -> parameterGroup.add(new BasicNameValuePair(key, value)));
+        return parameterGroup;
     }
 }

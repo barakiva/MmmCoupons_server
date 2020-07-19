@@ -15,7 +15,7 @@ public class Deal {
     private String title;
     @SerializedName("short_title")
     private String shortTitle;
-    @Column(length = 1200)
+    @Column(length = 2500)
     private String description;
     @Column(length = 1200)
     @SerializedName("fine_print")
